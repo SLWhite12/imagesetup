@@ -1,6 +1,6 @@
 USE_PKGBUILD=1
 include /usr/local/share/luggage/luggage.make
-PACKAGE_VERSION=0.1.2
+PACKAGE_VERSION=0.1.3
 TITLE=imagesetup
 REVERSE_DOMAIN=com.github.imagesetup
 PAYLOAD= \
