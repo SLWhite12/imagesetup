@@ -1,6 +1,6 @@
 USE_PKGBUILD=1
 include /usr/local/share/luggage/luggage.make
-PACKAGE_VERSION=0.1.1
+PACKAGE_VERSION=0.1.2
 TITLE=imagesetup
 REVERSE_DOMAIN=com.github.imagesetup
 PAYLOAD= \
@@ -12,7 +12,6 @@ PAYLOAD= \
 		pack-usr-local-outset-FoundationPlist \
 		pack-usr-local-outset-share-com.chilcote.outset.plist \
 		pack-usr-local-outset-login-once-firstlogin.sh \
-		pack-usr-local-script-oninstall.sh \
 		pack-script-postinstall
 
 l_usr_local_outset: l_usr_local
@@ -39,7 +38,3 @@ pack-usr-local-outset-login-once-%: % l_usr_local_outset
 
 pack-usr-local-script-%: % l_usr_local
 	@sudo ${INSTALL} -m 755 -g wheel -o root "${<}" ${WORK_D}/usr/local/script
-
-l_user_local_script: l_usr_local_script
-	@sudo chmod +x oninstall.sh
-	@sudo oninstall.sh
