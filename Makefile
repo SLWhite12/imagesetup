@@ -1,5 +1,5 @@
 PKGTITLE="imagesetup"
-PKGVERSION="0.1.7"
+PKGVERSION="0.1.9"
 PKGID=com.github.imagesetup
 PROJECT="imagesetup"
 
