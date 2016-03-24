@@ -2,27 +2,19 @@
 # reference: https://github.com/google/macops/blob/master/keychainminder/Package/postinstall
 
 [[ $3 != "/" ]] && exit 0
-
+#Inject launch daemons for boot
 /bin/launchctl load /Library/LaunchDaemons/com.github.outset.boot.plist
 /bin/launchctl load /Library/LaunchDaemons/com.github.outset.cleanup.plist
-
+/usr/local/outset
 user=$(/usr/bin/stat -f '%u' /dev/console)
 [[ -z "$user" ]] && exit 0
+#Inject launch agents for login
 /bin/launchctl asuser ${user} /bin/launchctl load /Library/LaunchAgents/com.github.outset.login.plist
 /bin/launchctl asuser ${user} /bin/launchctl load /Library/LaunchAgents/com.github.outset.on-demand.plist
-
-#Dock Copy
-dock()
-{
-    echo "---------- Copying Dock ----------"
-sudo cp /Users/tech/Library/Preferences/com.apple.dock.plist '/System/Library/User Template/English.lproj/Library/Preferences/com.apple.dock.plist'
-sudo chown root '/System/Library/User Template/English.lproj/Library/Preferences/com.apple.dock.plist'
-}
 
 #Add Printers
 printers()
 {
-echo "---------- Beginning to add printers. ----------"
 #E/MS 223
 lpadmin -p E_MS_223 -D "E/MS 223" -L "" -E -v smb://lcdre.wps.wps60.org/Print-Anywhere-223 -P "/Library/Printers/PPDs/Contents/Resources/KONICAMINOLTA223.gz" -o PaperSources=PC409 -o Finisher=FS529 -o KMPunchUnit=None -o PrinterHDD=True -o SecurePrintOnly=False -o UserType=Public -o printer-is-shared=false -o auth-info-required=negotiate
 #E/MS 224
@@ -48,7 +40,65 @@ lpadmin -p WHS_W_Green_423 -D "WHS-W-Green-423" -L "" -E -v smb://whswdre.wps.wp
 #WHS-W-Purple-751
 lpadmin -p WHS_W_Purple_751 -D "WHS-W-Purple-751" -L "" -E -v smb://whswdre.wps.wps60.org/WPrint-Anywhere-Purple -P "/Library/Printers/PPDs/Contents/Resources/KONICAMINOLTA751.gz" -o PaperSources=LU405 -o Finisher=FS524 -o KMPunchUnit=PK505-23 -o PrinterHDD=True -o SecurePrintOnly=False -o UserType=Public -o printer-is-shared=false -o auth-info-required=negotiate
 }
-printers
-dock
 
+iclouddiag()
+{
+# Disable iCloud Dialogue
+#Determine OS version
+osvers=$(sw_vers -productVersion | awk -F. '{print $2}')
+sw_vers=$(sw_vers -productVersion)
+
+#Determine OS build number
+
+sw_build=$(sw_vers -buildVersion)
+
+#Check first to see if the Mac is running 10.7.0 or higher. 
+#Check default template for iCloud. Suppress iCloud and Diagnostic pop-ups.
+if [[ ${osvers} -ge 7 ]]; then
+
+ for USER_TEMPLATE in "/System/Library/User Template"/*
+  do
+    /usr/bin/defaults write "${USER_TEMPLATE}"/Library/Preferences/com.apple.SetupAssistant DidSeeCloudSetup -bool TRUE
+    /usr/bin/defaults write "${USER_TEMPLATE}"/Library/Preferences/com.apple.SetupAssistant GestureMovieSeen none
+    /usr/bin/defaults write "${USER_TEMPLATE}"/Library/Preferences/com.apple.SetupAssistant LastSeenCloudProductVersion "${sw_vers}"
+    /usr/bin/defaults write "${USER_TEMPLATE}"/Library/Preferences/com.apple.SetupAssistant LastSeenBuddyBuildVersion "${sw_build}"      
+  done
+  
+ # Check existing user directories to suppress iCloud pop-up.
+ for USER_HOME in /Users/*
+  do
+    USER_UID=`basename "${USER_HOME}"`
+    if [ ! "${USER_UID}" = "Shared" ]; then
+      if [ ! -d "${USER_HOME}"/Library/Preferences ]; then
+        /bin/mkdir -p "${USER_HOME}"/Library/Preferences
+        /usr/sbin/chown "${USER_UID}" "${USER_HOME}"/Library
+        /usr/sbin/chown "${USER_UID}" "${USER_HOME}"/Library/Preferences
+      fi
+      if [ -d "${USER_HOME}"/Library/Preferences ]; then
+        /usr/bin/defaults write "${USER_HOME}"/Library/Preferences/com.apple.SetupAssistant DidSeeCloudSetup -bool TRUE
+        /usr/bin/defaults write "${USER_HOME}"/Library/Preferences/com.apple.SetupAssistant GestureMovieSeen none
+        /usr/bin/defaults write "${USER_HOME}"/Library/Preferences/com.apple.SetupAssistant LastSeenCloudProductVersion "${sw_vers}"
+        /usr/bin/defaults write "${USER_HOME}"/Library/Preferences/com.apple.SetupAssistant LastSeenBuddyBuildVersion "${sw_build}"
+        /usr/sbin/chown "${USER_UID}" "${USER_HOME}"/Library/Preferences/com.apple.SetupAssistant.plist
+      fi
+    fi
+  done
+fi
+}
+#Ignore users for outset so we don't overwrite dock, finder prefs, etc.
+ignoreusers()
+{
+/usr/local/outset/outset --add-ignored-user tech
+/usr/local/outset/outset --add-ignored-user admin
+/usr/local/outset/outset --add-ignored-user administrator
+/usr/local/outset/outset --add-ignored-user Technician
+/usr/local/outset/outset --add-ignored-user User
+/usr/local/outset/outset --add-ignored-user user
+/usr/local/outset/outset --add-ignored-user Testing
+}
+
+
+printers
+iclouddiag
+ignoreusers
 exit 0

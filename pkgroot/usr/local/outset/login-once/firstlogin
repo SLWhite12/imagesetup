@@ -1,17 +1,45 @@
 #!/bin/sh
 setosdefaults()
 {
-    #This writes mouse prefs, finder prefs, turns off App store autoupdate.
+#Two-button Mighty Mouse
 defaults write "/Users/${USER}/Library/Preferences/com.apple.driver.AppleHIDMouse" Button2 -int 2
+#Two-button Magic Mouse
 defaults write "/Users/${USER}/Library/Preferences/com.apple.driver.AppleBluetoothMultitouch.mouse" MouseButtonMode -string TwoButton
+#Two-finger right click trackpad
 defaults write "/Users/${USER}/Library/Preferences/com.apple.driver.AppleBluetoothMultitouch.trackpad" TrackpadRightClick -int 1
+#Finder Prefs
 defaults write "/Users/${USER}/Library/Preferences/com.apple.finder" ShowExternalHardDrivesOnDesktop -bool TRUE
 defaults write "/Users/${USER}/Library/Preferences/com.apple.finder" ShowMountedServersOnDesktop -bool TRUE
 defaults write "/Users/${USER}/Library/Preferences/com.apple.finder" ShowHardDrivesOnDesktop -bool TRUE
 defaults write "/Users/${USER}/Library/Preferences/com.apple.finder" ShowRemovableMediaOnDesktop -bool TRUE
+#App Store auto-updates disable
 defaults write "/Users/${USER}/Library/Preferences/com.apple.SoftwareUpdate" AutomaticCheckEnabled -bool FALSE
 defaults write "/Users/${USER}/Library/Preferences/com.apple.commerce" AutoUpdate -bool FALSE
 defaults write "/Users/${USER}/Library/Preferences/com.apple.commerce" AutoUpdateRestartRequired -bool FALSE
+#Keyboard viewer enable, not currently working.
+#defaults write "/Users/${USER}/Library/Preferences/com.apple.HIToolbox" AppleEnabledInputSources -array '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = U.S.; }' '{ InputSourceKind = "Non Keyboard Input Method"; "Bundle ID" = com.apple.CharacterPaletteIM; }' '{ InputSourceKind = "Non Keyboard Input Method"; "Bundle ID" = com.apple.KeyboardViewer; }'
+#defaults write "/Users/${USER}/Library/Preferences/com.apple.HIToolbox" AppleInputSourceHistory -array '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = U.S.; }'
+#defaults write "/Users/${USER}/Library/Preferences/com.apple.HIToolbox" AppleSelectedInputSources -array '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = U.S.; }'
+}
+docksetup()
+{
+#Remove all dock items
+/usr/local/bin/dockutil --remove all
+#Add apps
+/usr/local/bin/dockutil --add '/Applications/Launchpad.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Safari.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Firefox.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Google Chrome.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Microsoft Word.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Microsoft Powerpoint.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Microsoft Excel.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Promethean/ActivSoftware Inspire/Inspire.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Calendar.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/iTunes.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Maps.app' --no-restart
+/usr/local/bin/dockutil --add '/Applications/Photos.app' --no-restart
+#Add downloads folder and restart
+/usr/local/bin/dockutil --add '~/Downloads' --view fan --display stack
 }
 DisableOffice2016FirstRun()
 {
@@ -71,4 +99,6 @@ fi
 }
 
 setosdefaults
+docksetup
 Office2016Apps
+exit 0
