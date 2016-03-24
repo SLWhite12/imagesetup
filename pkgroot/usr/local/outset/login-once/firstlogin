@@ -9,9 +9,28 @@ defaults write "/Users/${USER}/Library/Preferences/com.apple.finder" ShowExterna
 defaults write "/Users/${USER}/Library/Preferences/com.apple.finder" ShowMountedServersOnDesktop -bool TRUE
 defaults write "/Users/${USER}/Library/Preferences/com.apple.finder" ShowHardDrivesOnDesktop -bool TRUE
 defaults write "/Users/${USER}/Library/Preferences/com.apple.finder" ShowRemovableMediaOnDesktop -bool TRUE
-defaults write "/Users/${USER}/Library/Preferences/com.apple.SoftwareUpdate" AutomaticCheckEnabled -bool FALSE
-defaults write "/Users/${USER}/Library/Preferences/com.apple.commerce" AutoUpdate -bool FALSE
-defaults write "/Users/${USER}/Library/Preferences/com.apple.commerce" AutoUpdateRestartRequired -bool FALSE
+sudo defaults write "/Users/${USER}/Library/Preferences/com.apple.SoftwareUpdate" AutomaticCheckEnabled -bool FALSE
+sudo defaults write "/Users/${USER}/Library/Preferences/com.apple.commerce" AutoUpdate -bool FALSE
+sudo defaults write "/Users/${USER}/Library/Preferences/com.apple.commerce" AutoUpdateRestartRequired -bool FALSE
+defaults write "/Users/${USER}/Library/Preferences/com.apple.HIToolbox" AppleEnabledInputSources -array '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = U.S.; }' '{ InputSourceKind = "Non Keyboard Input Method"; "Bundle ID" = com.apple.CharacterPaletteIM; }' '{ InputSourceKind = "Non Keyboard Input Method"; "Bundle ID" = com.apple.KeyboardViewer; }'
+defaults write "/Users/${USER}/Library/Preferences/com.apple.HIToolbox" AppleInputSourceHistory -array '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = U.S.; }'
+defaults write "/Users/${USER}/Library/Preferences/com.apple.HIToolbox" AppleSelectedInputSources -array '{ InputSourceKind = "Keyboard Layout"; "KeyboardLayout ID" = 0; "KeyboardLayout Name" = U.S.; }'
+}
+docksetup()
+{
+dockutil --remove all
+dockutil --add /Applications/Launchpad.app --no-restart
+dockutil --add /Applications/Safari.app --no-restart
+dockutil --add /Applications/Firefox.app --no-restart
+dockutil --add /Applications/Google Chrome.app --no-restart
+dockutil --add /Applications/Microsoft Word.app --no-restart
+dockutil --add /Applications/Microsoft Powerpoint.app --no-restart
+dockutil --add /Applications/Microsoft Excel.app --no-restart
+dockutil --add /Applications/Promethean/ActivSoftware Inspire/Inspire.app --no-restart
+dockutil --add /Applications/Calendar.app --no-restart
+dockutil --add /Applications/iTunes.app --no-restart
+dockutil --add /Applications/Maps.app --no-restart
+dockutil --add /Applications/Photos.app --no-restart
 }
 DisableOffice2016FirstRun()
 {
@@ -72,3 +91,4 @@ fi
 
 setosdefaults
 Office2016Apps
+exit 0
